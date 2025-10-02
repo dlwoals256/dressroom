@@ -1,0 +1,7 @@
+# Keys
+.env
+client_secret.json
+
+# Binaries
+.venv
+__pycache__
