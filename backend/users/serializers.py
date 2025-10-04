@@ -68,3 +68,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'email', 'last_login', 'profile']
+
+class ShopProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShopProfile
+        fields = ['id', 'user', 'shop_id', 'shop_name', 'tier', 'count']
+        read_only_fields = ['user', 'tier', 'count']

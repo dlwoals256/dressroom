@@ -17,12 +17,17 @@ from .models import CustomUser, ShopProfile
 from .serializers import (
     UserSerializer,
     UserRegisterationSerializer,
+    ShopProfileSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import viewsets
 
 class GenerateRequestView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request: Request):
         serializer = UserRequestSerializer(data=request.data)
         if not serializer.is_valid():
@@ -37,18 +42,7 @@ class GenerateRequestView(APIView):
         product_image = serializer.validated_data['product_image']
 
         try:
-            shop_profile = ShopProfile.objects.get(shop_id=shop_id)
-        except ShopProfile.DoesNotExist:
-            # 이 경우는 Shop은 있는데 ShopProfile이 없는 경우, 보통은 있을 수 없으나 예외 처리.
-            return Response({
-                'error': f'ShopProfile for shop [ {shop_id} ] not found. This shouldn\'t be happen, please contact support.'
-            }, status=status.HTTP_404_NOT_FOUND)
-        
-
-        # 이 레벨에서 에러가 났을 때 로깅이 안되고 STARTED로 남아있는 문제 발생
-        if shop_profile.check_count():
-            shop_profile.decreasing_count()
-
+            shop_profile = ShopProfile.objects.get(shop_id=shop_id, user=request.user)
             log = log_generation_request(
                 user=shop_profile.user,
                 shop_id=shop_id,
@@ -56,6 +50,15 @@ class GenerateRequestView(APIView):
                 used_tokens=0,
                 status=Status.STARTED.value
             )
+
+        except ShopProfile.DoesNotExist:
+            # 이 경우는 Shop은 있는데 ShopProfile이 없는 경우, 보통은 있을 수 없으나 예외 처리.
+            return Response({
+                'error': f'ShopProfile for shop [ {shop_id} ] not found. This shouldn\'t be happen, please contact support.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        if shop_profile.check_count():
+            shop_profile.decreasing_count()
 
             service_log = log_service(
                 shop_id=shop_id,
@@ -69,7 +72,7 @@ class GenerateRequestView(APIView):
                     person_image=person_image
                 )
 
-                log.used_tokens = tokens.total_tokens
+                log.used_tokens = tokens
                 log.status = Status.SUCCESS.value
                 log.save()
 
@@ -107,6 +110,9 @@ class GenerateRequestView(APIView):
                 log.save()
         
         else:
+            log.status = Status.FAILED.value
+            log.save()
+
             return Response(
                 {'error': 'Usage limit exceeded.'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -126,9 +132,15 @@ class WhoAmIAPIView(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
+class ShopProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = ShopProfileSerializer
+    permission_classes = [IsAuthenticated]
 
-
-
+    def get_queryset(self):
+        return self.request.user.shops.all()
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 

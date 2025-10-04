@@ -69,7 +69,7 @@ class UserProfile(models.Model):
     )
 
     def __str__(self):
-        return f'{self.user.username} ({self.user.email})'
+        return f'{self.user.email}'
 
 class ShopProfile(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='shops')
