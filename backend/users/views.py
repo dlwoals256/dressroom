@@ -10,25 +10,19 @@ from generations.loggers import log_generation_request
 from generations.models import Status, GenerationErrorLog
 from django.http import FileResponse
 import sys, traceback
-from rest_framework.decorators import api_view, action
+from rest_framework.decorators import api_view
 from .loggers import log_service_err, log_service
-from rest_framework import viewsets, generics
-from .models import CustomUser, UserProfile, ShopProfile
+from rest_framework import generics
+from .models import CustomUser, ShopProfile
 from .serializers import (
-    UserCreateSerializer,
-    ShopCreateSerializer,
-    CustomUserSerializer,
-    ChangePasswordSerializer,
-    UserProfileSerializer,
-    LoginSerializer,
+    UserSerializer,
+    UserRegisterationSerializer,
 )
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.authtoken.models import Token
-from rest_framework.authentication import TokenAuthentication
-from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
-class UserRequestView(APIView):
+class GenerateRequestView(APIView):
     def post(self, request: Request):
         serializer = UserRequestSerializer(data=request.data)
         if not serializer.is_valid():
@@ -117,62 +111,20 @@ class UserRequestView(APIView):
                 {'error': 'Usage limit exceeded.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-class CustomUserViewSet(viewsets.ModelViewSet):
+    
+class UserRegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-    
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        email = self.request.query_params.get('email', None)
+    serializer_class = UserRegisterationSerializer
+    permission_classes = [AllowAny]
 
-        if email:
-            queryset = queryset.filter(email=email)
+class WhoAmIAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
-        return queryset
-    
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
-    def change_password(self, request:Request):
-        serializer = ChangePasswordSerializer(data=request.data)
-        if serializer.is_valid():
-            user = request.user
-            old_password = serializer.validated_data['old_password']
-            new_password = serializer.validated_data['new_password']
-
-            if not user.check_password(old_password):
-                return Response({
-                    'old_password': ['Wrong password.']
-                }, status=status.HTTP_400_BAD_REQUEST)
-            
-            user.set_password(new_password)
-            user.save()
-
-            return Response({
-                'message': 'Password changed successfully.'
-            }, status=status.HTTP_200_OK)
-        
-        return Response(
-            serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
-class LoginAPIView(APIView):
-    serializer_class = LoginSerializer
-    authentication_classes = [TokenAuthentication]
-    
-    def post(self, request:Request):
-        serializer = LoginSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            user = authenticate(
-                username=serializer.data['username'],
-                password=serializer.data['password']
-            )
-            if user:
-                token, created = Token.objects.get_or_create()
-
-
-
-
+    def get(self, request:Request):
+        user = request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
 
 

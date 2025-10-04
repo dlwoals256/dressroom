@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from enum import Enum
 from django.core.validators import RegexValidator
 
@@ -26,7 +26,16 @@ class ErrorLevel(Enum):
     @classmethod
     def choices(cls):
         return [(key.value, key.name) for key in cls]
-    
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The email must be provided.')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 class CustomUser(AbstractUser):
     # AbstractUser는 기본적으로 username, password, email 필드를 가집니다.
@@ -34,14 +43,15 @@ class CustomUser(AbstractUser):
     # username을 이메일로 사용하기 위해 아래 설정을 추가합니다.
     email = models.EmailField(unique=True)
 
-    username = models.CharField(max_length=150, null=True, blank=True)
+    username = models.CharField(max_length=150, unique=False, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
 
     def __str__(self):
         return self.email
-
 
 class UserProfile(models.Model):
     user = models.OneToOneField(
@@ -60,8 +70,6 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} ({self.user.email})'
-
-
 
 class ShopProfile(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='shops')
