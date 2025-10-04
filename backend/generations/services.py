@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
-GEMINI_KEY = os.getenv('GEMINI_KEY')
+GEMINI_KEY = os.environ.get('GEMINI_KEY')
 
 class GeminiAPIResponseError(Exception):
     # Gemini API 응답 중 에러 발생 시

@@ -2,3 +2,6 @@ google-genai
 django
 djangorestframework
 python-dotenv
+pillow
+psycopg
+psycopg2-binary

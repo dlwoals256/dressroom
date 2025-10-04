@@ -5,3 +5,6 @@ client_secret.json
 # Binaries
 .venv
 __pycache__
+
+# Caches
+.DS_Store
