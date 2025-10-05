@@ -5,6 +5,7 @@ client_secret.json
 # Binaries
 .venv
 __pycache__
+cloud-sql-proxy
 
 # Caches
 .DS_Store
