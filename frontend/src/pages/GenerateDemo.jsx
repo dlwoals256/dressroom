@@ -1,5 +1,6 @@
 import React from 'react'
 import PageLayout from '../components/PageLayout.jsx'
+import { API_BASE } from '../config.js'
 
 const steps = [
   {
@@ -8,11 +9,11 @@ const steps = [
   },
   {
     title: '2. 상점 등록',
-    detail: '발급 받은 access 토큰을 Authorization 헤더에 담아 /api/shops/ 에 shop_id, shop_name을 전송합니다.'
+    detail: '발급 받은 access 토큰을 Authorization 헤더에 담아 /api/shops/ 로 shop_id, shop_name, company_name, business_registration_number, contact_phone을 전송합니다.'
   },
   {
     title: '3. Generate 호출',
-    detail: 'shop_id, customer_id, person_image, product_image를 FormData로 묶어 /api/generate/에 요청합니다.'
+    detail: 'shop_id, customer_id, person_image, product_image를 FormData로 묶어 /api/generate/로 전송하면 PNG 바이너리 응답을 바로 받을 수 있습니다.'
   }
 ]
 
@@ -23,13 +24,19 @@ const demoSnippet = [
   "formData.append('product_image', productBlob, 'product.png');",
   "formData.append('person_image', fileInput.files[0]);",
   '',
-  "const response = await fetch('https://dressroom-service-95829378695.us-central1.run.app/api/generate/', {",
+  `const response = await fetch('${API_BASE}/generate/', {`,
   "  method: 'POST',",
   "  headers: { Authorization: `Bearer ${accessToken}` },",
   '  body: formData,',
   '});',
-  'const resultBlob = await response.blob();',
-  'const previewUrl = URL.createObjectURL(resultBlob);'
+  '',
+  'if (!response.ok) {',
+  '  const err = await response.json();',
+  "  throw new Error(err.error || '생성 실패');",
+  '}',
+  '',
+  'const blob = await response.blob();',
+  'const previewUrl = URL.createObjectURL(blob);',
 ].join('\n')
 
 const GenerateDemo = () => {

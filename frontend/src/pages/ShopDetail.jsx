@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
-
-const API_BASE = 'https://dressroom-service-95829378695.us-central1.run.app/api'
+import { API_BASE } from '../config.js'
 
 const ShopDetail = () => {
   const { shopId } = useParams()
@@ -14,11 +13,46 @@ const ShopDetail = () => {
   const [genLoading, setGenLoading] = useState(false)
   const [genError, setGenError] = useState('')
   const [resultUrl, setResultUrl] = useState('')
+  const [usageHistory, setUsageHistory] = useState([])
+  const [usageLoading, setUsageLoading] = useState(false)
+  const [usageError, setUsageError] = useState('')
+  const objectUrlRef = useRef('')
   const fileInputRef = useRef(null)
 
   const productImageUrl = '/dev/example_product.jpg'
   const access = localStorage.getItem('access')
   const customerId = localStorage.getItem('userEmail') || 'demo-customer'
+
+  const authHeaders = access ? { Authorization: `Bearer ${access}` } : {}
+
+  useEffect(() => {
+    return () => {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current)
+      }
+    }
+  }, [])
+
+  const fetchShopDetail = async (showSpinner = true) => {
+    if (showSpinner) {
+      setLoading(true)
+      setError('')
+    }
+    try {
+      const res = await fetch(`${API_BASE}/shops/${encodeURIComponent(shopId)}/`, {
+        headers: authHeaders,
+      })
+      if (!res.ok) throw new Error('상점 정보를 불러올 수 없습니다.')
+      const data = await res.json()
+      setShop(data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      if (showSpinner) {
+        setLoading(false)
+      }
+    }
+  }
 
   useEffect(() => {
     if (!access) {
@@ -26,32 +60,42 @@ const ShopDetail = () => {
       setLoading(false)
       return
     }
+    fetchShopDetail(true)
+  }, [access, shopId])
 
-    const fetchShop = async () => {
-      setLoading(true)
-      setError('')
-      try {
-        const res = await fetch(`${API_BASE}/shops/${shopId}/`, {
-          headers: { Authorization: `Bearer ${access}` }
-        })
-        if (!res.ok) throw new Error('상점 정보를 불러올 수 없습니다.')
-        const data = await res.json()
-        setShop(data)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
+  const fetchUsageHistory = async () => {
+    if (!access) return
+    setUsageLoading(true)
+    setUsageError('')
+    try {
+      const res = await fetch(`${API_BASE}/shops/${encodeURIComponent(shopId)}/usage/?limit=6`, {
+        headers: authHeaders,
+      })
+      if (!res.ok) throw new Error('사용량 기록을 불러오지 못했습니다.')
+      const data = await res.json()
+      setUsageHistory(data)
+    } catch (err) {
+      setUsageError(err.message)
+    } finally {
+      setUsageLoading(false)
     }
+  }
 
-    fetchShop()
-  }, [shopId, access])
+  useEffect(() => {
+    if (shop) {
+      fetchUsageHistory()
+    }
+  }, [shop, shopId, access])
 
   const handlePersonChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
       setPersonImage(file)
       setPersonPreview(URL.createObjectURL(file))
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current)
+        objectUrlRef.current = ''
+      }
       setResultUrl('')
     }
   }
@@ -69,9 +113,14 @@ const ShopDetail = () => {
       setGenError('전신 사진을 업로드해 주세요.')
       return
     }
+    if (!shop) return
 
     setGenLoading(true)
     setGenError('')
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current)
+      objectUrlRef.current = ''
+    }
     setResultUrl('')
 
     try {
@@ -79,33 +128,38 @@ const ShopDetail = () => {
       const productBlob = await prodRes.blob()
 
       const formData = new FormData()
-      formData.append('shop_id', shopId)
+      formData.append('shop_id', shop.shop_id)
       formData.append('customer_id', customerId)
       formData.append('product_image', productBlob, 'product.png')
       formData.append('person_image', personImage)
 
       const res = await fetch(`${API_BASE}/generate/`, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${access}` },
-        body: formData
+        headers: authHeaders,
+        body: formData,
       })
 
       if (!res.ok) {
         let message = '이미지 생성에 실패했습니다.'
         try {
           const err = await res.json()
-          message = err.error || message
-        } catch (err) {
-          console.error(err)
+          message = err.error || Object.values(err)[0] || message
+        } catch (parseErr) {
+          console.error(parseErr)
         }
         throw new Error(message)
       }
 
       const blob = await res.blob()
-      setResultUrl(URL.createObjectURL(blob))
+      const url = URL.createObjectURL(blob)
+      objectUrlRef.current = url
+      setResultUrl(url)
+      setGenLoading(false)
+
+      await fetchShopDetail(false)
+      await fetchUsageHistory()
     } catch (err) {
       setGenError(err.message)
-    } finally {
       setGenLoading(false)
     }
   }
@@ -136,6 +190,8 @@ const ShopDetail = () => {
     )
   }
 
+  const usageSummary = shop?.current_month_usage
+
   return (
     <PageLayout>
       <div className="shop-detail-shell">
@@ -144,7 +200,18 @@ const ShopDetail = () => {
             <h2>{shop?.shop_name}</h2>
             <div className="shop-header__meta">
               <span>상점 ID · {shop?.shop_id}</span>
+              <span>업체명 · {shop?.company_name}</span>
+              <span>사업자등록번호 · {shop?.business_registration_number}</span>
+              <span>연락처 · {shop?.contact_phone}</span>
               <span>고객 식별자 · {customerId}</span>
+              {typeof shop?.count === 'number' && (
+                <span>남은 크레딧 · {shop.count}</span>
+              )}
+              {usageSummary && (
+                <span>
+                  이번 달 사용량 {usageSummary.used_requests}/{usageSummary.quota_snapshot}
+                </span>
+              )}
             </div>
           </div>
 
@@ -206,6 +273,30 @@ const ShopDetail = () => {
                 <p className="demo-panel__title">생성된 시착 이미지</p>
                 <img src={resultUrl} alt="생성된 시착 결과" />
               </div>
+            )}
+          </section>
+
+          <section className="usage-history">
+            <h3 className="section-heading">최근 사용량</h3>
+            {usageLoading && (
+              <div className="demo-status">
+                <div className="material-spinner" />
+                <span>사용량을 불러오는 중입니다…</span>
+              </div>
+            )}
+            {usageError && <div className="material-error">{usageError}</div>}
+            {!usageLoading && !usageError && usageHistory.length > 0 && (
+              <ul>
+                {usageHistory.map((entry) => (
+                  <li key={entry.id || entry.period_start}>
+                    <span>{entry.period_start}</span>
+                    <span>{entry.used_requests} / {entry.quota_snapshot}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!usageLoading && !usageError && usageHistory.length === 0 && (
+              <p className="auth-subtext">아직 집계된 사용량이 없습니다.</p>
             )}
           </section>
         </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
+import { API_BASE } from '../config.js'
 
 const LoginPage = () => {
   const [email, setEmail] = useState('')
@@ -14,7 +15,7 @@ const LoginPage = () => {
     setError('')
     setLoading(true)
     try {
-      const res = await fetch('https://dressroom-service-95829378695.us-central1.run.app/api/login/', {
+      const res = await fetch(`${API_BASE}/login/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })

@@ -1,35 +1,35 @@
-from .models import ServiceErrorLog, ServiceLog
 from typing import Optional
 
+from .models import ServiceErrorLog, ServiceLog, ShopProfile
+
+
 def log_service_err(
-        level: str,
-        err_from: Optional[str]
-):
-    '''
-    서비스 단 에러 로깅
-    '''
+    *,
+    level: str,
+    err_from: Optional[str],
+    shop: Optional[ShopProfile] = None,
+    message: str = '',
+) -> ServiceErrorLog:
+    """Persist an application level error for later auditing."""
 
-    log = ServiceErrorLog.objects.create(
+    return ServiceErrorLog.objects.create(
         level=level,
-        err_from=err_from
+        err_from=err_from,
+        shop=shop,
+        message=message,
     )
-
-    return log
 
 
 def log_service(
-        shop_id: str,
-        shop_name: str,
-        count: int
-):
-    '''
-    서비스 로깅
-    '''
+    *,
+    shop: ShopProfile,
+    remaining: int,
+    note: str = '',
+) -> ServiceLog:
+    """Track quota usage snapshots for a shop."""
 
-    log = ServiceLog.objects.create(
-        shop_id=shop_id,
-        shop_name=shop_name,
-        count=count
+    return ServiceLog.objects.create(
+        shop=shop,
+        requests_remaining=remaining,
+        note=note,
     )
-
-    return log

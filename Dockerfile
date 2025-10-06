@@ -15,7 +15,12 @@ RUN pip install -r requirements.txt
 COPY ./backend .
 
 # [추가] Django의 모든 정적 파일(admin CSS 등)을 한 곳으로 모음.
-RUN SECRET_KEY="dummy-key-for-build" DATABASE_URL="postgres://dummy:dummy@dummy/dummy" python manage.py collectstatic --noinput
+# 이미지 빌드를 위해 환경 변수 설정이 필요하여 로컬과도 배포 환경과도
+# 의미 없는 더미 환경 변수 설정
+RUN SECRET_KEY="dummy-key-for-build" \
+    DATABASE_URL="postgres://dummy:dummy@dummy/dummy" \
+    CSRF_ORIGIN="https://dummy.io" \
+    python manage.py collectstatic --noinput
 
 # 6. Gunicorn 웹 서버 실행
 # Cloud Run은 기본적으로 8080 포트를 사용.

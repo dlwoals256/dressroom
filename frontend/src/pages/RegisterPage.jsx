@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
+import TermsModal from '../components/TermsModal.jsx'
+import { API_BASE } from '../config.js'
 
 const RegisterPage = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
+  const [acceptTerms, setAcceptTerms] = useState(false)
+  const [showTerms, setShowTerms] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
@@ -13,12 +18,28 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+
+    if (!acceptTerms) {
+      setError('서비스 이용 약관에 동의해 주세요.')
+      return
+    }
+
     setLoading(true)
     try {
-      const res = await fetch('https://dressroom-service-95829378695.us-central1.run.app/api/register/', {
+      const payload = {
+        email,
+        password,
+        full_name: fullName,
+        accept_terms: true,
+      }
+      if (phone.trim()) {
+        payload.phone = phone.trim()
+      }
+
+      const res = await fetch(`${API_BASE}/register/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, phone })
+        body: JSON.stringify(payload)
       })
 
       if (!res.ok) {
@@ -28,7 +49,8 @@ const RegisterPage = () => {
           navigate('/login')
           return
         }
-        throw new Error(err.error || '회원가입에 실패했습니다.')
+        const firstError = typeof err === 'object' ? Object.values(err)[0] : null
+        throw new Error(firstError || err.error || '회원가입에 실패했습니다.')
       }
 
       alert('회원가입이 완료됐어요. 이제 로그인해 주세요!')
@@ -61,6 +83,17 @@ const RegisterPage = () => {
               required
             />
 
+            <label className="material-label" htmlFor="fullName">대표자 이름</label>
+            <input
+              id="fullName"
+              type="text"
+              className="material-input"
+              placeholder="홍길동"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+
             <label className="material-label" htmlFor="password">비밀번호</label>
             <input
               id="password"
@@ -72,7 +105,7 @@ const RegisterPage = () => {
               required
             />
 
-            <label className="material-label" htmlFor="phone">전화번호</label>
+            <label className="material-label" htmlFor="phone">연락처 (선택)</label>
             <input
               id="phone"
               type="tel"
@@ -80,8 +113,26 @@ const RegisterPage = () => {
               placeholder="010-1234-5678"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              required
             />
+
+            <div className="terms-consent">
+              <label className="material-label" htmlFor="acceptTerms">
+                <input
+                  id="acceptTerms"
+                  type="checkbox"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                />
+                <span>서비스 이용 약관에 동의합니다.</span>
+              </label>
+              <button
+                className="link-btn"
+                type="button"
+                onClick={() => setShowTerms(true)}
+              >
+                약관 보기
+              </button>
+            </div>
 
             <button className="material-btn" type="submit" disabled={loading}>
               {loading ? '가입 중…' : 'Dressroom 시작하기'}
@@ -96,6 +147,14 @@ const RegisterPage = () => {
           </div>
         </div>
       </div>
+      <TermsModal
+        open={showTerms}
+        onClose={() => setShowTerms(false)}
+        onAccept={() => {
+          setAcceptTerms(true)
+          setShowTerms(false)
+        }}
+      />
     </PageLayout>
   )
 }
