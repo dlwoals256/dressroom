@@ -19,7 +19,7 @@ const ShopDetail = () => {
   const objectUrlRef = useRef('')
   const fileInputRef = useRef(null)
 
-  const productImageUrl = '/dev/example_product.jpg'
+  const productImageUrl = '/dev/jacket.png'
   const access = localStorage.getItem('access')
   const customerId = localStorage.getItem('userEmail') || 'demo-customer'
 
@@ -131,7 +131,8 @@ const ShopDetail = () => {
       formData.append('shop_id', shop.shop_id)
       formData.append('customer_id', customerId)
       formData.append('product_image', productBlob, 'product.png')
-      formData.append('person_image', personImage)
+      const extension = personImage.name.split('.').pop()?.toLowerCase() || 'jpg'
+      formData.append('person_image', personImage, `person.${extension}`)
 
       const res = await fetch(`${API_BASE}/generate/`, {
         method: 'POST',
@@ -226,11 +227,11 @@ const ShopDetail = () => {
                 <span className="shop-meta">쇼핑몰 연동 시 이 이미지를 API 결과로 교체할 수 있습니다.</span>
               </div>
 
-              <div className="demo-panel">
-                <p className="demo-panel__title">내 사진 업로드</p>
-                <input
-                  type="file"
-                  ref={fileInputRef}
+            <div className="demo-panel">
+              <p className="demo-panel__title">내 사진 업로드</p>
+              <input
+                type="file"
+                ref={fileInputRef}
                   accept="image/*"
                   className="hidden-file-input"
                   onChange={handlePersonChange}
@@ -249,6 +250,11 @@ const ShopDetail = () => {
                 )}
               </div>
             </div>
+
+            <p className="auth-subtext" style={{ marginTop: 12, textAlign: 'center' }}>
+              AI는 실수를 할 수 있습니다. 이미지가 복잡하면 시착에 실패할 수도 있습니다. <br />
+              보다 나은 결과물을 위해선 혼자만 등장하는 신체를 가리는 물건이 최대한 배제된 전신 사진을 추천합니다.
+            </p>
 
             <button
               type="button"

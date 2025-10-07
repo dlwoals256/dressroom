@@ -1,0 +1,102 @@
+{
+    "hero": {
+        "badge": "AIバーチャル試着プラットフォーム",
+        "title": "ショッピング客のための没入型試着体験をわずか10秒で",
+        "subtitle": "Dressroomは、商品画像とお客様の全身写真を組み合わせ、リアルタイムで試着画像を生成するB2B埋め込み型サービスです。シンプルなワークフローと信頼性の高いAPIで、すぐに導入できます。",
+        "ctaStart": "無料ではじめる",
+        "ctaLogin": "すでにアカウントがありますか？ログイン",
+        "visual": {
+            "cards": [
+                { "title": "オンボーディング", "body": "会員登録してストアを登録すると、すぐにDemo Generateエンドポイントを試せます。" },
+                { "title": "トークンベースのセキュリティ", "body": "ログイン後に発行されるアクセス・トークンで、ストア作成や画像生成を安全にリクエストできます。" },
+                { "title": "レスポンシブ・レイアウト", "body": "デスクトップでは2カラム、モバイルでは縦並びで自然なユーザー体験を提供します。" },
+                { "title": "グラデーション・テーマ", "body": "Google Materialの原則に基づくモダンなテーマで、ショップにプロフェッショナルな印象を与えます。" }
+            ]
+        }
+    },
+    "features": {
+        "sectionTitle": "Dressroomで完成するAI試着ジャーニー",
+        "items": [
+            { "icon": "⚡", "title": "約10秒で生成", "description": "ボタンを押すとAIが即座に試着画像を生成し、購買体験を途切れさせません。" },
+            { "icon": "🔗", "title": "埋め込み統合", "description": "既存のECページにワンラインのスクリプトを挿入し、商品詳細ページとシームレスに接続します。" },
+            { "icon": "🛍️", "title": "商品画像の連携", "description": "商品APIとの連携を容易に設計しており、ダミー画像を実在のカタログデータに簡単に置き換えられます。" },
+            { "icon": "🔐", "title": "セキュリティ & トークンベースのアクセス", "description": "JWTベースの認証で、ストアデータとGenerateエンドポイントへのアクセスを安全に制御します。" }
+        ]
+    },
+    "register": {
+        "title": "新規登録",
+        "subtitle": "アカウントを作成して、ショップにDressroomデモを連携しましょう。",
+        "labels": {
+            "email": "メールアドレス",
+            "fullName": "氏名",
+            "password": "パスワード",
+            "phone": "連絡先（任意）"
+        },
+        "placeholders": {
+            "email": "name@domain.com",
+            "fullName": "山田太郎",
+            "password": "8文字以上の安全なパスワード",
+            "phone": "090-1234-5678"
+        },
+        "terms": {
+            "label": "利用規約に同意します。",
+            "view": "規約を見る"
+        },
+        "submit": {
+            "default": "Dressroomをはじめる",
+            "loading": "登録中…"
+        },
+        "footer": {
+            "prompt": "すでにアカウントをお持ちですか？",
+            "login": "ログイン"
+        },
+        "alerts": {
+            "duplicate": "既に登録されたメールアドレスです。ログインしてください。",
+            "success": "登録が完了しました。ログインしてください！"
+        },
+        "errors": {
+            "acceptTerms": "利用規約に同意してください。",
+            "generic": "登録に失敗しました。"
+        }
+    },
+    "layout": {
+    "brand": {
+      "aria": "ホームへ",
+      "logoAlt": "Dressroom ロゴ",
+      "tagline": "AI Virtual Fitting for Modern Commerce"
+    },
+    "nav": {
+      "aria": "メインナビゲーション",
+      "about": "サービス紹介",
+      "dashboard": "ダッシュボード",
+      "myStore": "マイストア",
+      "login": "ログイン",
+      "register": "新規登録",
+      "language": "言語を選択"
+    },
+    "footer": "没入型リテール体験のために丁寧に作られました。"
+  },
+  "login": {
+    "title": "ログイン",
+    "subtitle": "発行されたトークンでストア情報を管理し、Generateデモを実行できます。",
+    "labels": {
+      "email": "メールアドレス",
+      "password": "パスワード"
+    },
+    "placeholders": {
+      "email": "name@domain.com",
+      "password": "パスワードを入力してください"
+    },
+    "submit": {
+      "default": "ダッシュボードへ",
+      "loading": "ログイン中…"
+    },
+    "footer": {
+      "prompt": "まだアカウントがありませんか？",
+      "register": "今すぐ登録"
+    },
+    "errors": {
+      "generic": "ログインに失敗しました。"
+    }
+  }
+}

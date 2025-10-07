@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
 import { API_BASE } from '../config.js'
+import { useTranslation } from 'react-i18next'
 
 const LoginPage = () => {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -22,8 +24,8 @@ const LoginPage = () => {
       })
 
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.detail || '로그인에 실패했습니다.')
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.detail || t('login.errors.generic'))
       }
 
       const tokens = await res.json()
@@ -44,43 +46,43 @@ const LoginPage = () => {
       <div className="auth-page">
         <div className="auth-panel">
           <div>
-            <h2 className="auth-heading">로그인</h2>
-            <p className="auth-subtext">발급받은 토큰으로 상점 정보를 관리하고 Generate 데모를 실행하세요.</p>
+            <h2 className="auth-heading">{t('login.title')}</h2>
+            <p className="auth-subtext">{t('login.subtitle')}</p>
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
-            <label className="material-label" htmlFor="email">이메일</label>
+            <label className="material-label" htmlFor="email">{t('login.labels.email')}</label>
             <input
               id="email"
               type="email"
               className="material-input"
-              placeholder="name@domain.com"
+              placeholder={t('login.placeholders.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
 
-            <label className="material-label" htmlFor="password">비밀번호</label>
+            <label className="material-label" htmlFor="password">{t('login.labels.password')}</label>
             <input
               id="password"
               type="password"
               className="material-input"
-              placeholder="비밀번호를 입력하세요"
+              placeholder={t('login.placeholders.password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
 
             <button className="material-btn" type="submit" disabled={loading}>
-              {loading ? '로그인 중…' : '대시보드로 이동'}
+              {loading ? t('login.submit.loading') : t('login.submit.default')}
             </button>
           </form>
 
           {error && <div className="material-error">{error}</div>}
 
           <div className="auth-footer">
-            아직 회원이 아니신가요?{' '}
-            <Link to="/register">지금 가입하기</Link>
+            {t('login.footer.prompt')}{' '}
+            <Link to="/register">{t('login.footer.register')}</Link>
           </div>
         </div>
       </div>

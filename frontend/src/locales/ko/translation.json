@@ -1,0 +1,102 @@
+{
+    "hero": {
+        "badge": "AI Virtual Fitting Platform",
+        "title": "쇼핑몰 고객을 위한 몰입형 시착 경험을 단 10초 만에",
+        "subtitle": "Dressroom은 제품 이미지와 고객의 전신 사진을 결합해 실시간으로 시착 이미지를 만들어 주는 B2B 임베디드 서비스입니다. 간결한 워크플로우와 안정적인 API로 빠르게 도입하세요.",
+        "ctaStart": "무료로 시작하기",
+        "ctaLogin": "이미 계정이 있다면 로그인",
+        "visual": {
+            "cards": [
+                { "title": "온보딩", "body": "회원가입 후 상점을 등록하면 즉시 Demo Generate 엔드포인트를 체험할 수 있습니다." },
+                { "title": "토큰 기반 보안", "body": "로그인 후 발급받은 Access 토큰으로 상점 생성과 이미지 생성을 안전하게 요청합니다." },
+                { "title": "반응형 레이아웃", "body": "데스크톱에서는 좌우 2열, 모바일에서는 상하 배치로 자연스러운 사용자 경험을 제공합니다." },
+                { "title": "그라데이션 테마", "body": "Google Material 원칙을 따르는 모던한 테마로 쇼핑몰에 전문적인 인상을 남길 수 있습니다." }
+            ]
+        }
+    },
+    "features": {
+        "sectionTitle": "Dressroom으로 완성하는 AI 시착 여정",
+        "items": [
+            { "icon": "⚡", "title": "10초 내외 생성", "description": "고객이 버튼을 누르면 AI가 즉시 시착 이미지를 생성해 쇼핑 경험을 끊김 없이 이어줍니다." },
+            { "icon": "🔗", "title": "임베드 통합", "description": "기존 쇼핑몰 페이지에 한 줄 스크립트로 삽입해 제품 상세 보기와 자연스럽게 연결됩니다." },
+            { "icon": "🛍️", "title": "제품 이미지 연동", "description": "상품 API와 손쉽게 연동할 수 있도록 설계되어 더미 이미지를 실제 상품 데이터로 간단히 교체할 수 있습니다." },
+            { "icon": "🔐", "title": "보안 & 토큰 기반 접근", "description": "JWT 기반 인증으로 상점 데이터와 Generate 엔드포인트 접근을 안전하게 제어합니다." }
+        ]
+    },
+    "register": {
+        "title": "회원가입",
+        "subtitle": "계정을 만들고 내 쇼핑몰에 Dressroom 데모를 연동해 보세요.",
+        "labels": {
+            "email": "이메일",
+            "fullName": "대표자 이름",
+            "password": "비밀번호",
+            "phone": "연락처 (선택)"
+        },
+        "placeholders": {
+            "email": "name@domain.com",
+            "fullName": "홍길동",
+            "password": "8자 이상의 안전한 비밀번호",
+            "phone": "010-1234-5678"
+        },
+        "terms": {
+            "label": "서비스 이용 약관에 동의합니다.",
+            "view": "약관 보기"
+        },
+        "submit": {
+            "default": "Dressroom 시작하기",
+            "loading": "가입 중…"
+        },
+        "footer": {
+            "prompt": "이미 계정이 있으신가요?",
+            "login": "로그인"
+        },
+        "alerts": {
+            "duplicate": "이미 가입된 이메일입니다. 로그인 해주세요.",
+            "success": "회원가입이 완료됐어요. 이제 로그인해 주세요!"
+        },
+        "errors": {
+            "acceptTerms": "서비스 이용 약관에 동의해 주세요.",
+            "generic": "회원가입에 실패했습니다."
+        }
+    },
+    "layout": {
+    "brand": {
+      "aria": "홈으로",
+      "logoAlt": "Dressroom 로고",
+      "tagline": "AI Virtual Fitting for Modern Commerce"
+    },
+    "nav": {
+      "aria": "주요 메뉴",
+      "about": "서비스 소개",
+      "dashboard": "대시보드",
+      "myStore": "내 상점",
+      "login": "로그인",
+      "register": "회원가입",
+      "language": "언어 선택"
+    },
+    "footer": "몰입형 리테일 경험을 위해 정성껏 만들었습니다."
+  },
+  "login": {
+    "title": "로그인",
+    "subtitle": "발급받은 토큰으로 상점 정보를 관리하고 Generate 데모를 실행하세요.",
+    "labels": {
+      "email": "이메일",
+      "password": "비밀번호"
+    },
+    "placeholders": {
+      "email": "name@domain.com",
+      "password": "비밀번호를 입력하세요"
+    },
+    "submit": {
+      "default": "대시보드로 이동",
+      "loading": "로그인 중…"
+    },
+    "footer": {
+      "prompt": "아직 회원이 아니신가요?",
+      "register": "지금 가입하기"
+    },
+    "errors": {
+      "generic": "로그인에 실패했습니다."
+    }
+  }
+}

@@ -30,7 +30,7 @@ class _GeminiAPIService:
                  model='gemini-2.5-flash-image-preview'):
         product = Image.open(product_image)
         person = Image.open(person_image)
-        prompt = "Generate a shot of the model wearing the new garment, ensuring it fits naturally on their body. Take the garment from [Image 1: Product Garment Image] and replace the clothing on the model in [Image 2: Model Image] with it. Maintain the exact background, model's pose, angle, and lighting conditions from [Image 2: Model Image]. The garment should faithfully replicate its design and details from [Image 1: Product Garment Image] with minimal alteration."
+        prompt = "Put the garment product image onto the model image while keeping the model image’s background, pose, and lighting."
         contents = [product, person, prompt]
 
         response = self.client.models.generate_content(

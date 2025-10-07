@@ -3,8 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
 import TermsModal from '../components/TermsModal.jsx'
 import { API_BASE } from '../config.js'
+import { useTranslation } from 'react-i18next'
 
 const RegisterPage = () => {
+  const { t } = useTranslation()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
@@ -20,7 +23,7 @@ const RegisterPage = () => {
     setError('')
 
     if (!acceptTerms) {
-      setError('서비스 이용 약관에 동의해 주세요.')
+      setError(t('register.errors.acceptTerms'))
       return
     }
 
@@ -45,15 +48,15 @@ const RegisterPage = () => {
       if (!res.ok) {
         const err = await res.json()
         if (err.error && (err.error.includes('이미 가입') || err.error.includes('exists'))) {
-          alert('이미 가입된 이메일입니다. 로그인 해주세요.')
+          alert(t('register.alerts.duplicate'))
           navigate('/login')
           return
         }
         const firstError = typeof err === 'object' ? Object.values(err)[0] : null
-        throw new Error(firstError || err.error || '회원가입에 실패했습니다.')
+        throw new Error(firstError || err.error || t('register.errors.generic'))
       }
 
-      alert('회원가입이 완료됐어요. 이제 로그인해 주세요!')
+      alert(t('register.alerts.success'))
       navigate('/login')
     } catch (err) {
       setError(err.message)
@@ -67,50 +70,50 @@ const RegisterPage = () => {
       <div className="auth-page">
         <div className="auth-panel">
           <div>
-            <h2 className="auth-heading">회원가입</h2>
-            <p className="auth-subtext">계정을 만들고 내 쇼핑몰에 Dressroom 데모를 연동해 보세요.</p>
+            <h2 className="auth-heading">{t('register.title')}</h2>
+            <p className="auth-subtext">{t('register.subtitle')}</p>
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
-            <label className="material-label" htmlFor="email">이메일</label>
+            <label className="material-label" htmlFor="email">{t('register.labels.email')}</label>
             <input
               id="email"
               type="email"
               className="material-input"
-              placeholder="name@domain.com"
+              placeholder={t('register.placeholders.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
 
-            <label className="material-label" htmlFor="fullName">대표자 이름</label>
+            <label className="material-label" htmlFor="fullName">{t('register.labels.fullName')}</label>
             <input
               id="fullName"
               type="text"
               className="material-input"
-              placeholder="홍길동"
+              placeholder={t('register.placeholders.fullName')}
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
             />
 
-            <label className="material-label" htmlFor="password">비밀번호</label>
+            <label className="material-label" htmlFor="password">{t('register.labels.password')}</label>
             <input
               id="password"
               type="password"
               className="material-input"
-              placeholder="8자 이상의 안전한 비밀번호"
+              placeholder={t('register.placeholders.password')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
 
-            <label className="material-label" htmlFor="phone">연락처 (선택)</label>
+            <label className="material-label" htmlFor="phone">{t('register.labels.phone')}</label>
             <input
               id="phone"
               type="tel"
               className="material-input"
-              placeholder="010-1234-5678"
+              placeholder={t('register.placeholders.phone')}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
@@ -123,27 +126,27 @@ const RegisterPage = () => {
                   checked={acceptTerms}
                   onChange={(e) => setAcceptTerms(e.target.checked)}
                 />
-                <span>서비스 이용 약관에 동의합니다.</span>
+                <span>{t('register.terms.label')}</span>
               </label>
               <button
                 className="link-btn"
                 type="button"
                 onClick={() => setShowTerms(true)}
               >
-                약관 보기
+                {t('register.terms.view')}
               </button>
             </div>
 
             <button className="material-btn" type="submit" disabled={loading}>
-              {loading ? '가입 중…' : 'Dressroom 시작하기'}
+              {loading ? t('register.submit.loading') : t('register.submit.default')}
             </button>
           </form>
 
           {error && <div className="material-error">{error}</div>}
 
           <div className="auth-footer">
-            이미 계정이 있으신가요?{' '}
-            <Link to="/login">로그인</Link>
+            {t('register.footer.prompt')}{' '}
+            <Link to="/login">{t('register.footer.login')}</Link>
           </div>
         </div>
       </div>

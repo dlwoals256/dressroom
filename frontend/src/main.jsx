@@ -3,6 +3,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
+import './i18n'
 
 // ✅ [1] react-router-dom에서 필요한 기능들을 가져옵니다.
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';

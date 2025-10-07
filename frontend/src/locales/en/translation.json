@@ -1,0 +1,102 @@
+{
+    "hero": {
+        "badge": "AI Virtual Fitting Platform",
+        "title": "An immersive try-on experience for shoppers in just 10 seconds",
+        "subtitle": "Dressroom is a B2B embedded service that combines product images and a customer’s full-body photo to generate try-on images in real time. Get started quickly with a simple workflow and reliable APIs.",
+        "ctaStart": "Start for free",
+        "ctaLogin": "Already have an account? Log in",
+        "visual": {
+            "cards": [
+                { "title": "Onboarding", "body": "After signing up and registering your store, you can instantly try the Demo Generate endpoint." },
+                { "title": "Token-based security", "body": "Use the access token issued after login to securely create stores and generate images." },
+                { "title": "Responsive layout", "body": "Two columns on desktop and stacked on mobile for a natural user experience." },
+                { "title": "Gradient theme", "body": "A modern theme based on Google Material principles leaves a professional impression on your shop." }
+            ]
+        }
+    },
+    "features": {
+        "sectionTitle": "Build the AI try-on journey with Dressroom",
+        "items": [
+            { "icon": "⚡", "title": "Generated in ~10 seconds", "description": "When the customer taps the button, AI instantly creates a try-on image so the shopping flow stays uninterrupted." },
+            { "icon": "🔗", "title": "Embedded integration", "description": "Insert a single script into your existing shop pages to connect seamlessly with product detail views." },
+            { "icon": "🛍️", "title": "Product image linkage", "description": "Designed for easy integration with your product API so dummy images can be replaced with real catalog data." },
+            { "icon": "🔐", "title": "Security & token-based access", "description": "JWT-based authentication safely controls access to store data and the Generate endpoint." }
+        ]
+    },
+    "register": {
+        "title": "Create account",
+        "subtitle": "Create your account and connect the Dressroom demo to your shop.",
+        "labels": {
+            "email": "Email",
+            "fullName": "Full name",
+            "password": "Password",
+            "phone": "Phone (optional)"
+        },
+        "placeholders": {
+            "email": "name@domain.com",
+            "fullName": "Your full name",
+            "password": "A secure password (8+ characters)",
+            "phone": "010-1234-5678"
+        },
+        "terms": {
+            "label": "I agree to the Terms of Service.",
+            "view": "View terms"
+        },
+        "submit": {
+            "default": "Get started with Dressroom",
+            "loading": "Creating account…"
+        },
+        "footer": {
+            "prompt": "Already have an account?",
+            "login": "Log in"
+        },
+        "alerts": {
+            "duplicate": "Email is already registered. Please log in.",
+            "success": "Sign-up complete. Please log in!"
+        },
+        "errors": {
+            "acceptTerms": "Please agree to the Terms of Service.",
+            "generic": "Failed to sign up."
+        }
+    },
+    "layout": {
+    "brand": {
+      "aria": "Go to home",
+      "logoAlt": "Dressroom logo",
+      "tagline": "AI Virtual Fitting for Modern Commerce"
+    },
+    "nav": {
+      "aria": "Primary navigation",
+      "about": "About",
+      "dashboard": "Dashboard",
+      "myStore": "My Store",
+      "login": "Log in",
+      "register": "Sign up",
+      "language": "Language"
+    },
+    "footer": "Crafted for immersive retail experiences."
+  },
+  "login": {
+    "title": "Log in",
+    "subtitle": "Use your issued tokens to manage your store and run the Generate demo.",
+    "labels": {
+      "email": "Email",
+      "password": "Password"
+    },
+    "placeholders": {
+      "email": "name@domain.com",
+      "password": "Enter your password"
+    },
+    "submit": {
+      "default": "Go to dashboard",
+      "loading": "Logging in…"
+    },
+    "footer": {
+      "prompt": "Not a member yet?",
+      "register": "Sign up now"
+    },
+    "errors": {
+      "generic": "Failed to log in."
+    }
+  }
+}
