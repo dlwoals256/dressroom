@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
 import { useTranslation } from 'react-i18next'
+import { IS_DEMO } from '../config.js'
 
 
 const LandingPage = () => {
   const { t } = useTranslation()
+  const [showDemoNotice, setShowDemoNotice] = useState(false)
 
 
   const featureItems = t('features.items', { returnObjects: true })
@@ -21,7 +23,17 @@ const LandingPage = () => {
             <h1 className="hero__title">{t('hero.title')}</h1>
             <p className="hero__subtitle">{t('hero.subtitle')}</p>
             <div className="hero__cta">
-              <Link to="/register" className="cta-primary">{t('hero.ctaStart')}</Link>
+              {IS_DEMO ? (
+                <button
+                  type="button"
+                  className="cta-primary"
+                  onClick={() => setShowDemoNotice(true)}
+                >
+                  {t('hero.ctaStart')}
+                </button>
+              ) : (
+                <Link to="/register" className="cta-primary">{t('hero.ctaStart')}</Link>
+              )}
               <Link to="/login" className="cta-secondary">{t('hero.ctaLogin')}</Link>
             </div>
           </div>
@@ -51,6 +63,27 @@ const LandingPage = () => {
           </div>
         </section>
       </div>
+      {IS_DEMO && showDemoNotice && (
+        <div className="modal-overlay">
+          <div className="modal-panel">
+            <header className="modal-header">
+              <h3>{t('demo.modal.title')}</h3>
+            </header>
+            <div className="modal-content">
+              <p>{t('demo.modal.message')}</p>
+            </div>
+            <footer className="modal-footer">
+              <button
+                className="material-btn"
+                type="button"
+                onClick={() => setShowDemoNotice(false)}
+              >
+                {t('demo.modal.close')}
+              </button>
+            </footer>
+          </div>
+        </div>
+      )}
     </PageLayout>
   )
 }

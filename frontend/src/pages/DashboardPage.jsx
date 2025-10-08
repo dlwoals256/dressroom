@@ -2,8 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
 import { API_BASE } from '../config.js'
+import { useTranslation } from 'react-i18next'
 
 const DashboardPage = () => {
+  const { t } = useTranslation()
+
   const [user, setUser] = useState(null)
   const [shops, setShops] = useState([])
   const [loading, setLoading] = useState(true)
@@ -29,32 +32,6 @@ const DashboardPage = () => {
       return
     }
 
-    const fetchData = async () => {
-      setLoading(true)
-      setError('')
-      try {
-        const headers = { Authorization: `Bearer ${access}` }
-        const [userRes, shopRes] = await Promise.all([
-          fetch(`${API_BASE}/whoami/`, { headers }),
-          fetch(`${API_BASE}/shops/`, { headers })
-        ])
-
-        if (!userRes.ok) throw new Error('회원 정보를 불러올 수 없습니다. 다시 로그인해 주세요.')
-        if (!shopRes.ok) throw new Error('상점 정보를 불러오는 중 문제가 발생했습니다.')
-
-        const userData = await userRes.json()
-        const shopData = await shopRes.json()
-
-        setUser(userData)
-        setShops(shopData)
-        primeUsageCache(shopData)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     const primeUsageCache = (shopList) => {
       setUsageCache((prev) => {
         const next = { ...prev }
@@ -70,8 +47,34 @@ const DashboardPage = () => {
       })
     }
 
+    const fetchData = async () => {
+      setLoading(true)
+      setError('')
+      try {
+        const headers = { Authorization: `Bearer ${access}` }
+        const [userRes, shopRes] = await Promise.all([
+          fetch(`${API_BASE}/whoami/`, { headers }),
+          fetch(`${API_BASE}/shops/`, { headers })
+        ])
+
+        if (!userRes.ok) throw new Error(t('dashboard.errors.fetchUser'))
+        if (!shopRes.ok) throw new Error(t('dashboard.errors.fetchShops'))
+
+        const userData = await userRes.json()
+        const shopData = await shopRes.json()
+
+        setUser(userData)
+        setShops(shopData)
+        primeUsageCache(shopData)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
     fetchData()
-  }, [access, navigate])
+  }, [access, navigate, t])
 
   const headers = useMemo(() => ({ Authorization: `Bearer ${access}` }), [access])
 
@@ -123,8 +126,8 @@ const DashboardPage = () => {
       })
 
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || Object.values(err)[0] || '상점 등록에 실패했습니다.')
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || Object.values(err)[0] || t('dashboard.shopForm.errors.createFail'))
       }
 
       setShopId('')
@@ -148,7 +151,7 @@ const DashboardPage = () => {
     setUsageLoading((prev) => ({ ...prev, [key]: true }))
     try {
       const res = await fetch(`${API_BASE}/shops/${encodeURIComponent(key)}/usage/?limit=6`, { headers })
-      if (!res.ok) throw new Error('사용량 기록을 불러오지 못했습니다.')
+      if (!res.ok) throw new Error(t('dashboard.shops.usage.loadError'))
       const data = await res.json()
       setUsageCache((prev) => ({
         ...prev,
@@ -179,7 +182,7 @@ const DashboardPage = () => {
     if (Number.isNaN(amount) || amount === 0) {
       setAdjustForms((prev) => ({
         ...prev,
-        [key]: { ...prev[key], error: '0이 아닌 숫자를 입력해 주세요.' }
+        [key]: { ...prev[key], error: t('dashboard.shops.quotaForm.errors.amountInvalid') }
       }))
       return
     }
@@ -194,8 +197,8 @@ const DashboardPage = () => {
         body: JSON.stringify({ amount, note: formState.note || '' })
       })
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error || Object.values(err)[0] || '조정에 실패했습니다.')
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || Object.values(err)[0] || t('dashboard.shops.quotaForm.errors.adjustFail'))
       }
       await refreshShops()
       setAdjustForms((prev) => ({ ...prev, [key]: { amount: '', note: '', submitting: false, error: '' } }))
@@ -217,13 +220,20 @@ const DashboardPage = () => {
     }))
   }
 
+  const formatUsage = (shop) => {
+    const summary = usageCache[shop.shop_id]?.summary
+    if (!summary) return t('dashboard.shops.usage.remainingOnly', { count: shop.count })
+    const { used_requests = 0, quota_snapshot = shop.monthly_quota } = summary
+    return t('dashboard.shops.usage.summary', { used: used_requests, quota: quota_snapshot, count: shop.count })
+  }
+
   if (loading) {
     return (
       <PageLayout>
         <div className="fullscreen-state">
           <div className="state-card">
             <div className="material-spinner" />
-            <p className="state-card__message">대시보드를 불러오는 중입니다…</p>
+            <p className="state-card__message">{t('dashboard.loading.message')}</p>
           </div>
         </div>
       </PageLayout>
@@ -235,10 +245,10 @@ const DashboardPage = () => {
       <PageLayout>
         <div className="fullscreen-state">
           <div className="state-card">
-            <p className="state-card__title">문제가 발생했어요</p>
+            <p className="state-card__title">{t('dashboard.errorView.title')}</p>
             <p className="state-card__message">{error}</p>
             <div className="inline-actions">
-              <Link className="material-btn-outlined" to="/login">다시 로그인</Link>
+              <Link className="material-btn-outlined" to="/login">{t('dashboard.errorView.relogin')}</Link>
             </div>
           </div>
         </div>
@@ -246,46 +256,39 @@ const DashboardPage = () => {
     )
   }
 
-  const formatUsage = (shop) => {
-    const summary = usageCache[shop.shop_id]?.summary
-    if (!summary) return `남은 크레딧 ${shop.count}`
-    const { used_requests = 0, quota_snapshot = shop.monthly_quota } = summary
-    return `이번 달 사용량 ${used_requests}/${quota_snapshot} · 남은 크레딧 ${shop.count}`
-  }
-
   return (
     <PageLayout>
       <div className="dashboard-shell">
         <div className="dashboard-card">
           <div>
-            <h2>내 계정 & 상점</h2>
-            <p className="auth-subtext">발급된 토큰으로 연결된 상점을 관리하고 Generate 데모를 실행하세요.</p>
+            <h2>{t('dashboard.header.title')}</h2>
+            <p className="auth-subtext">{t('dashboard.header.subtitle')}</p>
           </div>
 
           {user && (
             <div className="summary-grid">
               <div className="summary-card">
-                <span className="summary-card__label">이메일</span>
+                <span className="summary-card__label">{t('dashboard.user.email')}</span>
                 <span className="summary-card__value">{user.email}</span>
               </div>
               <div className="summary-card">
-                <span className="summary-card__label">연락처</span>
-                <span className="summary-card__value">{user.profile?.phone || '등록되지 않음'}</span>
+                <span className="summary-card__label">{t('dashboard.user.phone')}</span>
+                <span className="summary-card__value">{user.profile?.phone || t('dashboard.user.phoneNotSet')}</span>
               </div>
             </div>
           )}
 
           <section className="shop-section">
             <div className="inline-actions inline-actions--spread">
-              <h3 className="section-heading">보유한 상점</h3>
+              <h3 className="section-heading">{t('dashboard.shops.heading')}</h3>
               <button className="material-btn-outlined" onClick={() => setShowShopForm((prev) => !prev)}>
-                {showShopForm ? '상점 등록 닫기' : '새 상점 등록'}
+                {showShopForm ? t('dashboard.shops.toggleClose') : t('dashboard.shops.toggleOpen')}
               </button>
             </div>
 
             {shops.length === 0 ? (
               <div className="shop-empty">
-                아직 등록된 상점이 없습니다. 첫 번째 상점을 등록하고 데모를 실행해 보세요.
+                {t('dashboard.shops.empty')}
               </div>
             ) : (
               <ul className="shop-list">
@@ -298,10 +301,10 @@ const DashboardPage = () => {
                         <Link className="shop-link" to={`/shops/${shop.shop_id}`}>
                           {shop.shop_name}
                         </Link>
-                        <span className="shop-meta">상점 ID · {shop.shop_id}</span>
-                        <span className="shop-meta">사업자번호 · {shop.business_registration_number}</span>
-                        <span className="shop-meta">연락처 · {shop.contact_phone}</span>
-                        <span className="shop-meta">사용량 · {formatUsage(shop)}</span>
+                        <span className="shop-meta">{t('dashboard.shops.meta.shopId')} · {shop.shop_id}</span>
+                        <span className="shop-meta">{t('dashboard.shops.meta.businessNumber')} · {shop.business_registration_number}</span>
+                        <span className="shop-meta">{t('dashboard.shops.meta.phone')} · {shop.contact_phone}</span>
+                        <span className="shop-meta">{t('dashboard.shops.meta.usage')} · {formatUsage(shop)}</span>
                       </div>
                       <div className="inline-actions inline-actions--spread">
                         <button
@@ -309,32 +312,32 @@ const DashboardPage = () => {
                           onClick={() => loadUsageHistory(shop)}
                           disabled={usageLoading[shop.shop_id]}
                         >
-                          {usageLoading[shop.shop_id] ? '사용량 불러오는 중…' : '사용량 기록 보기'}
+                          {usageLoading[shop.shop_id] ? t('dashboard.shops.usage.buttonLoading') : t('dashboard.shops.usage.buttonLoad')}
                         </button>
                         <form className="quota-form" onSubmit={(e) => handleAdjustSubmit(shop, e)}>
                           <input
                             type="number"
                             className="material-input"
-                            placeholder="± 크레딧"
+                            placeholder={t('dashboard.shops.quotaForm.amountPlaceholder')}
                             value={formState.amount}
                             onChange={(e) => handleAdjustChange(shop.shop_id, 'amount', e.target.value)}
                           />
                           <input
                             type="text"
                             className="material-input"
-                            placeholder="관리 메모 (선택)"
+                            placeholder={t('dashboard.shops.quotaForm.notePlaceholder')}
                             value={formState.note || ''}
                             onChange={(e) => handleAdjustChange(shop.shop_id, 'note', e.target.value)}
                           />
                           <button className="material-btn" type="submit" disabled={formState.submitting}>
-                            {formState.submitting ? '조정 중…' : '쿼터 조정'}
+                            {formState.submitting ? t('dashboard.shops.quotaForm.submitting') : t('dashboard.shops.quotaForm.submit')}
                           </button>
                         </form>
                       </div>
                       {formState.error && <div className="material-error">{formState.error}</div>}
                       {usageState?.entries && (
                         <div className="usage-history">
-                          <h4>최근 사용량</h4>
+                          <h4>{t('dashboard.shops.usage.recent')}</h4>
                           {usageState.entries[0]?.error ? (
                             <div className="material-error">{usageState.entries[0].error}</div>
                           ) : (
@@ -358,67 +361,67 @@ const DashboardPage = () => {
             {showShopForm && (
               <form className="shop-form" onSubmit={handleShopSubmit}>
                 <div>
-                  <label className="material-label" htmlFor="shopId">상점 ID</label>
+                  <label className="material-label" htmlFor="shopId">{t('dashboard.shopForm.labels.shopId')}</label>
                   <input
                     id="shopId"
                     type="text"
                     className="material-input"
-                    placeholder="예: dressroom-shop-01"
+                    placeholder={t('dashboard.shopForm.placeholders.shopId')}
                     value={shopId}
                     onChange={(e) => setShopId(e.target.value)}
                     required
                   />
                 </div>
                 <div>
-                  <label className="material-label" htmlFor="shopName">상점 이름</label>
+                  <label className="material-label" htmlFor="shopName">{t('dashboard.shopForm.labels.shopName')}</label>
                   <input
                     id="shopName"
                     type="text"
                     className="material-input"
-                    placeholder="Dressroom Mall"
+                    placeholder={t('dashboard.shopForm.placeholders.shopName')}
                     value={shopName}
                     onChange={(e) => setShopName(e.target.value)}
                     required
                   />
                 </div>
                 <div>
-                  <label className="material-label" htmlFor="companyName">업체명</label>
+                  <label className="material-label" htmlFor="companyName">{t('dashboard.shopForm.labels.companyName')}</label>
                   <input
                     id="companyName"
                     type="text"
                     className="material-input"
-                    placeholder="드레스룸 주식회사"
+                    placeholder={t('dashboard.shopForm.placeholders.companyName')}
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     required
                   />
                 </div>
                 <div>
-                  <label className="material-label" htmlFor="businessNumber">사업자등록번호</label>
+                  <label className="material-label" htmlFor="businessNumber">{t('dashboard.shopForm.labels.businessNumber')}</label>
                   <input
                     id="businessNumber"
                     type="text"
                     className="material-input"
-                    placeholder="10자리 숫자"
+                    placeholder={t('dashboard.shopForm.placeholders.businessNumber')}
                     value={businessNumber}
                     onChange={(e) => setBusinessNumber(e.target.value)}
                     required
                   />
                 </div>
                 <div>
-                  <label className="material-label" htmlFor="contactPhone">사업장 연락처</label>
+                  <label className="material-label" htmlFor="contactPhone">{t('dashboard.shopForm.labels.contactPhone')}</label>
                   <input
                     id="contactPhone"
                     type="tel"
                     className="material-input"
-                    placeholder="02-000-0000"
+                    placeholder={t('dashboard.shopForm.placeholders.contactPhone')}
                     value={contactPhone}
                     onChange={(e) => setContactPhone(e.target.value)}
                     required
                   />
                 </div>
                 <button className="material-btn" type="submit" disabled={shopLoading}>
-                  {shopLoading ? '등록 중…' : '상점 등록'}
+                  {shopLoading ? t('dashboard.shopForm.submitting') : t('dashboard.shopForm.submit')}
                 </button>
                 {shopError && <div className="material-error">{shopError}</div>}
               </form>

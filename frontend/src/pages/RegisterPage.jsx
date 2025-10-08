@@ -2,11 +2,27 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
 import TermsModal from '../components/TermsModal.jsx'
-import { API_BASE } from '../config.js'
+import { API_BASE, IS_DEMO } from '../config.js'
 import { useTranslation } from 'react-i18next'
 
 const RegisterPage = () => {
   const { t } = useTranslation()
+
+  if (IS_DEMO) {
+    return (
+      <PageLayout>
+        <div className="auth-page">
+          <div className="auth-panel">
+            <h2 className="auth-heading">{t('demo.register.title')}</h2>
+            <p className="auth-subtext">{t('demo.register.message')}</p>
+            <Link className="material-btn" to="/">
+              {t('demo.register.cta')}
+            </Link>
+          </div>
+        </div>
+      </PageLayout>
+    )
+  }
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

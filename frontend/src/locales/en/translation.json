@@ -23,6 +23,18 @@
             { "icon": "🔐", "title": "Security & token-based access", "description": "JWT-based authentication safely controls access to store data and the Generate endpoint." }
         ]
     },
+    "demo": {
+        "modal": {
+            "title": "Dressroom is currently in demo preview",
+            "message": "We're preparing the full launch. Please check back soon.",
+            "close": "Got it"
+        },
+        "register": {
+            "title": "Sign-ups are temporarily paused",
+            "message": "Dressroom is currently running in demo mode, so new account registrations are unavailable. Please check back when we launch!",
+            "cta": "Back to home"
+        }
+    },
     "register": {
         "title": "Create account",
         "subtitle": "Create your account and connect the Dressroom demo to your shop.",
@@ -97,6 +109,158 @@
     },
     "errors": {
       "generic": "Failed to log in."
+    }
+  },
+  "dashboard": {
+    "loading": { "message": "Loading dashboard…" },
+    "errorView": { "title": "Something went wrong", "relogin": "Log in again" },
+    "errors": {
+      "fetchUser": "We couldn't load your account. Please sign in again.",
+      "fetchShops": "There was a problem loading shop information.",
+      "usageLoadFail": "Failed to load usage history.",
+      "generic": "An error occurred while processing your request."
+    },
+    "header": {
+      "title": "My Account & Shops",
+      "subtitle": "Manage connected shops and run the Generate demo with your issued tokens."
+    },
+    "user": {
+      "email": "Email",
+      "phone": "Phone",
+      "phoneNotSet": "Not set"
+    },
+    "shops": {
+      "heading": "Your Shops",
+      "toggleOpen": "Register new shop",
+      "toggleClose": "Close registration",
+      "empty": "No shops yet. Register your first shop and try the demo.",
+      "meta": {
+        "shopId": "Shop ID",
+        "businessNumber": "Business No.",
+        "phone": "Phone",
+        "usage": "Usage"
+      },
+      "usage": {
+        "buttonLoad": "View usage history",
+        "buttonLoading": "Loading usage…",
+        "recent": "Recent usage",
+        "loadError": "Failed to load usage history.",
+        "summary": "This month {{used}}/{{quota}} · Remaining credits {{count}}",
+        "remainingOnly": "Remaining credits {{count}}"
+      },
+      "quotaForm": {
+        "amountPlaceholder": "± credits",
+        "notePlaceholder": "Admin note (optional)",
+        "submit": "Adjust quota",
+        "submitting": "Adjusting…",
+        "errors": {
+          "amountInvalid": "Please enter a non-zero number.",
+          "adjustFail": "Failed to adjust quota."
+        }
+      }
+    },
+    "shopForm": {
+      "labels": {
+        "shopId": "Shop ID",
+        "shopName": "Shop name",
+        "companyName": "Company name",
+        "businessNumber": "Business registration number",
+        "contactPhone": "Contact phone"
+      },
+      "placeholders": {
+        "shopId": "e.g., dressroom-shop-01",
+        "shopName": "Dressroom Mall",
+        "companyName": "Dressroom Inc.",
+        "businessNumber": "10 digits",
+        "contactPhone": "02-000-0000"
+      },
+      "submit": "Register shop",
+      "submitting": "Registering…",
+      "errors": {
+        "createFail": "Failed to register shop."
+      }
+    }
+  },
+  "shopDetail": {
+    "loading": "Loading shop info…",
+    "errorView": { "title": "Unable to complete your request" },
+    "errors": {
+      "fetchShop": "We couldn't load the shop details.",
+      "loginRequired": "Sign-in required.",
+      "loadUsage": "Failed to load usage history.",
+      "generic": "An error occurred while processing your request."
+    },
+    "meta": {
+      "shopId": "Shop ID",
+      "companyName": "Company name",
+      "businessNumber": "Business registration number",
+      "phone": "Contact phone",
+      "customerId": "Customer ID",
+      "remainingCredits": "Remaining credits",
+      "monthUsage": "This month {{used}}/{{quota}}"
+    },
+    "generate": {
+      "heading": "Generate demo",
+      "subtitle": "Upload a product image and a customer image to create an AI try-on result.",
+      "product": {
+        "title": "Product image",
+        "alt": "Product image",
+        "note": "When connected to your shop, this will be replaced with product API output."
+      },
+      "person": {
+        "title": "Upload your photo",
+        "select": "Choose a full-body photo",
+        "previewAlt": "Upload preview",
+        "reset": "Choose another photo"
+      },
+      "tips": "AI can make mistakes, and complex images may fail to try on. For better results, use a single-person, full-body photo with minimal occlusions.",
+      "cta": { "default": "Generate AI try-on image", "loading": "Generating… (~10s)" },
+      "status": "Generating your image. Please wait a moment.",
+      "result": { "title": "Generated try-on image", "alt": "Generated try-on result" },
+      "errors": {
+        "noPersonImage": "Please upload a full-body photo.",
+        "fail": "Failed to generate image."
+      }
+    },
+    "usage": {
+      "heading": "Recent usage",
+      "loading": "Loading usage…",
+      "empty": "No usage recorded yet."
+    }
+  },
+  "generateDemo": {
+    "header": {
+      "title": "Generate API Demo Guide",
+      "subtitle": "You can run the demo directly from the shop detail page, and follow the steps below to implement it easily in an embed context."
+    },
+    "steps": [
+      {
+        "title": "1. Issue access token",
+        "detail": "Send email and password to the login endpoint (/api/login/) to receive access and refresh tokens."
+      },
+      {
+        "title": "2. Register a shop",
+        "detail": "Send shop_id, shop_name, company_name, business_registration_number, contact_phone to /api/shops/ with the issued access token in the Authorization header."
+      },
+      {
+        "title": "3. Call Generate",
+        "detail": "Bundle shop_id, customer_id, person_image, product_image in FormData and POST to /api/generate/ to receive a PNG binary response."
+      }
+    ],
+    "codeSection": {
+      "title": "Sample code",
+      "subtitle": "Example that collects a product image and a customer photo on an embed button click and sends a Generate request."
+    },
+    "codeSnippet": {
+      "errorFallback": "Generation failed"
+    },
+    "tipSection": {
+      "title": "Tips",
+      "items": [
+        "A Generate request typically takes around 10 seconds. Show a spinner or progress to inform users while waiting.",
+        "We currently use a dummy product image. When connected to your shop API, place the real image in the same FormData field.",
+        "Passing a customer identifier via customer_id helps you tie the generated image back to your order flow."
+      ]
     }
   }
 }

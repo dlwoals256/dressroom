@@ -23,6 +23,18 @@
             { "icon": "🔐", "title": "보안 & 토큰 기반 접근", "description": "JWT 기반 인증으로 상점 데이터와 Generate 엔드포인트 접근을 안전하게 제어합니다." }
         ]
     },
+    "demo": {
+        "modal": {
+            "title": "현재 드레스룸은 시연 단계입니다!",
+            "message": "정식 서비스 런칭을 기다려주세요.",
+            "close": "확인"
+        },
+        "register": {
+            "title": "정식 서비스를 준비 중이에요",
+            "message": "현재는 시연 환경만 제공되고 있어 회원가입을 지원하지 않습니다. 정식 서비스 런칭을 기다려주세요!",
+            "cta": "홈으로 돌아가기"
+        }
+    },
     "register": {
         "title": "회원가입",
         "subtitle": "계정을 만들고 내 쇼핑몰에 Dressroom 데모를 연동해 보세요.",
@@ -97,6 +109,158 @@
     },
     "errors": {
       "generic": "로그인에 실패했습니다."
+    }
+  },
+  "dashboard": {
+    "loading": { "message": "대시보드를 불러오는 중입니다…" },
+    "errorView": { "title": "문제가 발생했어요", "relogin": "다시 로그인" },
+    "errors": {
+      "fetchUser": "회원 정보를 불러올 수 없습니다. 다시 로그인해 주세요.",
+      "fetchShops": "상점 정보를 불러오는 중 문제가 발생했습니다.",
+      "usageLoadFail": "사용량 기록을 불러오지 못했습니다.",
+      "generic": "요청 처리 중 오류가 발생했습니다."
+    },
+    "header": {
+      "title": "내 계정 & 상점",
+      "subtitle": "발급된 토큰으로 연결된 상점을 관리하고 Generate 데모를 실행하세요."
+    },
+    "user": {
+      "email": "이메일",
+      "phone": "연락처",
+      "phoneNotSet": "등록되지 않음"
+    },
+    "shops": {
+      "heading": "보유한 상점",
+      "toggleOpen": "새 상점 등록",
+      "toggleClose": "상점 등록 닫기",
+      "empty": "아직 등록된 상점이 없습니다. 첫 번째 상점을 등록하고 데모를 실행해 보세요.",
+      "meta": {
+        "shopId": "상점 ID",
+        "businessNumber": "사업자번호",
+        "phone": "연락처",
+        "usage": "사용량"
+      },
+      "usage": {
+        "buttonLoad": "사용량 기록 보기",
+        "buttonLoading": "사용량 불러오는 중…",
+        "recent": "최근 사용량",
+        "loadError": "사용량 기록을 불러오지 못했습니다.",
+        "summary": "이번 달 사용량 {{used}}/{{quota}} · 남은 크레딧 {{count}}",
+        "remainingOnly": "남은 크레딧 {{count}}"
+      },
+      "quotaForm": {
+        "amountPlaceholder": "± 크레딧",
+        "notePlaceholder": "관리 메모 (선택)",
+        "submit": "쿼터 조정",
+        "submitting": "조정 중…",
+        "errors": {
+          "amountInvalid": "0이 아닌 숫자를 입력해 주세요.",
+          "adjustFail": "조정에 실패했습니다."
+        }
+      }
+    },
+    "shopForm": {
+      "labels": {
+        "shopId": "상점 ID",
+        "shopName": "상점 이름",
+        "companyName": "업체명",
+        "businessNumber": "사업자등록번호",
+        "contactPhone": "사업장 연락처"
+      },
+      "placeholders": {
+        "shopId": "예: dressroom-shop-01",
+        "shopName": "Dressroom Mall",
+        "companyName": "드레스룸 주식회사",
+        "businessNumber": "10자리 숫자",
+        "contactPhone": "02-000-0000"
+      },
+      "submit": "상점 등록",
+      "submitting": "등록 중…",
+      "errors": {
+        "createFail": "상점 등록에 실패했습니다."
+      }
+    }
+  },
+  "shopDetail": {
+    "loading": "상점 정보를 불러오는 중입니다…",
+    "errorView": { "title": "요청을 완료할 수 없어요" },
+    "errors": {
+      "fetchShop": "상점 정보를 불러올 수 없습니다.",
+      "loginRequired": "로그인이 필요합니다.",
+      "loadUsage": "사용량 기록을 불러오지 못했습니다.",
+      "generic": "요청 처리 중 오류가 발생했습니다."
+    },
+    "meta": {
+      "shopId": "상점 ID",
+      "companyName": "업체명",
+      "businessNumber": "사업자등록번호",
+      "phone": "연락처",
+      "customerId": "고객 식별자",
+      "remainingCredits": "남은 크레딧",
+      "monthUsage": "이번 달 사용량 {{used}}/{{quota}}"
+    },
+    "generate": {
+      "heading": "Generate 데모",
+      "subtitle": "제품 이미지와 고객 이미지를 업로드해 AI 기반 시착 결과를 만들어 보세요.",
+      "product": {
+        "title": "제품 이미지",
+        "alt": "제품 이미지",
+        "note": "쇼핑몰 연동 시 이 이미지를 API 결과로 교체할 수 있습니다."
+      },
+      "person": {
+        "title": "내 사진 업로드",
+        "select": "전신 사진 선택하기",
+        "previewAlt": "업로드 미리보기",
+        "reset": "다른 사진 선택"
+      },
+      "tips": "AI는 실수를 할 수 있습니다. 이미지가 복잡하면 시착에 실패할 수도 있습니다. 보다 나은 결과물을 위해서는 한 사람만 등장하고 신체를 가리는 물건이 최소화된 전신 사진을 추천합니다.",
+      "cta": { "default": "AI 시착 이미지 생성", "loading": "이미지를 생성하는 중… (약 10초)" },
+      "status": "AI가 이미지를 생성하고 있어요. 잠시만 기다려 주세요.",
+      "result": { "title": "생성된 시착 이미지", "alt": "생성된 시착 결과" },
+      "errors": {
+        "noPersonImage": "전신 사진을 업로드해 주세요.",
+        "fail": "이미지 생성에 실패했습니다."
+      }
+    },
+    "usage": {
+      "heading": "최근 사용량",
+      "loading": "사용량을 불러오는 중입니다…",
+      "empty": "아직 집계된 사용량이 없습니다."
+    }
+  },
+  "generateDemo": {
+    "header": {
+      "title": "Generate API 데모 가이드",
+      "subtitle": "상점 상세 페이지에서 바로 데모를 실행할 수 있고, 아래 단계를 따라 임베드 환경에서도 쉽게 구현할 수 있습니다."
+    },
+    "steps": [
+      {
+        "title": "1. Access 토큰 발급",
+        "detail": "로그인 엔드포인트(/api/login/)로 이메일과 비밀번호를 전송하면 access, refresh 토큰이 반환됩니다."
+      },
+      {
+        "title": "2. 상점 등록",
+        "detail": "발급 받은 access 토큰을 Authorization 헤더에 담아 /api/shops/ 로 shop_id, shop_name, company_name, business_registration_number, contact_phone을 전송합니다."
+      },
+      {
+        "title": "3. Generate 호출",
+        "detail": "shop_id, customer_id, person_image, product_image를 FormData로 묶어 /api/generate/로 전송하면 PNG 바이너리 응답을 바로 받을 수 있습니다."
+      }
+    ],
+    "codeSection": {
+      "title": "샘플 코드",
+      "subtitle": "임베드 버튼 클릭 시 제품 이미지와 고객 사진을 수집해 Generate 요청을 보내는 예시입니다."
+    },
+    "codeSnippet": {
+      "errorFallback": "생성 실패"
+    },
+    "tipSection": {
+      "title": "Tip",
+      "items": [
+        "Generate 요청은 평균 10초 내외가 소요되므로, 스피너나 프로그레스 애니메이션으로 기다리는 시간을 안내해 주세요.",
+        "제품 이미지는 현재 더미 파일을 사용 중이며, 쇼핑몰 API와 연동 시 동일한 FormData 필드에 실제 이미지를 넣으면 됩니다.",
+        "고객 식별자를 customer_id로 전달하면, 쇼핑몰 측에서 생성된 이미지를 고객 주문 흐름에 연결하기 쉽습니다."
+      ]
     }
   }
 }

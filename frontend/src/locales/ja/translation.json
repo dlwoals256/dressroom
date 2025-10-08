@@ -23,6 +23,18 @@
             { "icon": "🔐", "title": "セキュリティ & トークンベースのアクセス", "description": "JWTベースの認証で、ストアデータとGenerateエンドポイントへのアクセスを安全に制御します。" }
         ]
     },
+    "demo": {
+        "modal": {
+            "title": "現在Dressroomはデモ段階です",
+            "message": "正式リリースまで今しばらくお待ちください。",
+            "close": "了解"
+        },
+        "register": {
+            "title": "新規登録は一時停止中です",
+            "message": "現在はデモ環境のみ提供しているため、新規アカウント登録はご利用いただけません。正式ローンチをお待ちください。",
+            "cta": "ホームに戻る"
+        }
+    },
     "register": {
         "title": "新規登録",
         "subtitle": "アカウントを作成して、ショップにDressroomデモを連携しましょう。",
@@ -97,6 +109,158 @@
     },
     "errors": {
       "generic": "ログインに失敗しました。"
+    }
+  },
+  "dashboard": {
+    "loading": { "message": "ダッシュボードを読み込み中…" },
+    "errorView": { "title": "問題が発生しました", "relogin": "再ログイン" },
+    "errors": {
+      "fetchUser": "アカウント情報を取得できませんでした。再度ログインしてください。",
+      "fetchShops": "ショップ情報の取得中に問題が発生しました。",
+      "usageLoadFail": "利用履歴を読み込めませんでした。",
+      "generic": "リクエストの処理中にエラーが発生しました。"
+    },
+    "header": {
+      "title": "マイアカウント＆ショップ",
+      "subtitle": "発行されたトークンで接続済みショップを管理し、Generateデモを実行できます。"
+    },
+    "user": {
+      "email": "メールアドレス",
+      "phone": "連絡先",
+      "phoneNotSet": "未登録"
+    },
+    "shops": {
+      "heading": "所有ショップ",
+      "toggleOpen": "新しいショップを登録",
+      "toggleClose": "登録を閉じる",
+      "empty": "まだショップがありません。最初のショップを登録してデモをお試しください。",
+      "meta": {
+        "shopId": "ショップID",
+        "businessNumber": "事業者番号",
+        "phone": "連絡先",
+        "usage": "利用状況"
+      },
+      "usage": {
+        "buttonLoad": "利用履歴を見る",
+        "buttonLoading": "利用状況を読み込み中…",
+        "recent": "直近の利用",
+        "loadError": "利用履歴を読み込めませんでした。",
+        "summary": "今月の利用 {{used}}/{{quota}} ・ 残りクレジット {{count}}",
+        "remainingOnly": "残りクレジット {{count}}"
+      },
+      "quotaForm": {
+        "amountPlaceholder": "± クレジット",
+        "notePlaceholder": "管理メモ（任意）",
+        "submit": "クォータ調整",
+        "submitting": "調整中…",
+        "errors": {
+          "amountInvalid": "0以外の数値を入力してください。",
+          "adjustFail": "調整に失敗しました。"
+        }
+      }
+    },
+    "shopForm": {
+      "labels": {
+        "shopId": "ショップID",
+        "shopName": "ショップ名",
+        "companyName": "会社名",
+        "businessNumber": "事業者登録番号",
+        "contactPhone": "店舗連絡先"
+      },
+      "placeholders": {
+        "shopId": "例: dressroom-shop-01",
+        "shopName": "Dressroom Mall",
+        "companyName": "Dressroom株式会社",
+        "businessNumber": "10桁の数字",
+        "contactPhone": "02-000-0000"
+      },
+      "submit": "ショップを登録",
+      "submitting": "登録中…",
+      "errors": {
+        "createFail": "ショップの登録に失敗しました。"
+      }
+    }
+  },
+  "shopDetail": {
+    "loading": "ショップ情報を読み込み中…",
+    "errorView": { "title": "リクエストを完了できませんでした" },
+    "errors": {
+      "fetchShop": "ショップ情報を取得できませんでした。",
+      "loginRequired": "ログインが必要です。",
+      "loadUsage": "利用履歴を読み込めませんでした。",
+      "generic": "リクエストの処理中にエラーが発生しました。"
+    },
+    "meta": {
+      "shopId": "ショップID",
+      "companyName": "会社名",
+      "businessNumber": "事業者登録番号",
+      "phone": "連絡先",
+      "customerId": "カスタマーID",
+      "remainingCredits": "残りクレジット",
+      "monthUsage": "今月の利用 {{used}}/{{quota}}"
+    },
+    "generate": {
+      "heading": "Generate デモ",
+      "subtitle": "商品画像とお客様の画像をアップロードして、AIによる試着結果を作成します。",
+      "product": {
+        "title": "商品画像",
+        "alt": "商品画像",
+        "note": "ショップ連携時には、この画像は商品APIの結果に置き換えられます。"
+      },
+      "person": {
+        "title": "写真をアップロード",
+        "select": "全身写真を選択",
+        "previewAlt": "アップロードプレビュー",
+        "reset": "別の写真を選ぶ"
+      },
+      "tips": "AIは誤ることがあります。複雑な画像では試着に失敗する場合があります。より良い結果のためには、人物が一人で遮蔽物の少ない全身写真をおすすめします。",
+      "cta": { "default": "AI試着画像を生成", "loading": "生成中…(約10秒)" },
+      "status": "画像を生成しています。しばらくお待ちください。",
+      "result": { "title": "生成された試着画像", "alt": "生成結果" },
+      "errors": {
+        "noPersonImage": "全身写真をアップロードしてください。",
+        "fail": "画像の生成に失敗しました。"
+      }
+    },
+    "usage": {
+      "heading": "直近の利用",
+      "loading": "利用状況を読み込み中…",
+      "empty": "まだ利用記録はありません。"
+    }
+  },
+  "generateDemo": {
+    "header": {
+      "title": "Generate API デモガイド",
+      "subtitle": "ショップ詳細ページから直接デモを実行でき、以下の手順に従えば埋め込み環境でも簡単に実装できます。"
+    },
+    "steps": [
+      {
+        "title": "1. アクセストークンの発行",
+        "detail": "ログインエンドポイント（/api/login/)にメールアドレスとパスワードを送信すると、access と refresh トークンが返されます。"
+      },
+      {
+        "title": "2. ショップ登録",
+        "detail": "発行された access トークンを Authorization ヘッダーに入れて、/api/shops/ に shop_id, shop_name, company_name, business_registration_number, contact_phone を送信します。"
+      },
+      {
+        "title": "3. Generate 呼び出し",
+        "detail": "shop_id, customer_id, person_image, product_image を FormData にまとめ、/api/generate/ へ送信すると PNG バイナリのレスポンスを受け取れます。"
+      }
+    ],
+    "codeSection": {
+      "title": "サンプルコード",
+      "subtitle": "埋め込みボタンのクリック時に商品画像と顧客写真を収集し、Generate リクエストを送る例です。"
+    },
+    "codeSnippet": {
+      "errorFallback": "生成に失敗しました"
+    },
+    "tipSection": {
+      "title": "Tip",
+      "items": [
+        "Generate リクエストは平均して約10秒かかります。スピナーやプログレスで待機時間を案内してください。",
+        "現在はダミーの商品画像を使用しています。ショップAPIと連携したら、同じ FormData フィールドに実際の画像を入れてください。",
+        "customer_id として顧客識別子を渡すと、生成画像を注文フローに紐付けやすくなります。"
+      ]
     }
   }
 }

@@ -17,7 +17,7 @@ router.register(r'shops', ShopProfileViewSet, basename='shop')
 
 urlpatterns = [
     path('generate/', GenerateRequestView.as_view(), name='generate'),
-    path('register/', UserRegisterView.as_view(), name='register'),
+    # path('register/', UserRegisterView.as_view(), name='register'),
     path('login/', TokenObtainPairView.as_view(), name='login'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
     path('whoami/', WhoAmIAPIView.as_view(), name='whoami'),

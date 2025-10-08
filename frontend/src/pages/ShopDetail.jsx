@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import PageLayout from '../components/PageLayout.jsx'
 import { API_BASE } from '../config.js'
+import { useTranslation } from 'react-i18next'
 
 const ShopDetail = () => {
+  const { t } = useTranslation()
   const { shopId } = useParams()
   const [shop, setShop] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -42,7 +44,7 @@ const ShopDetail = () => {
       const res = await fetch(`${API_BASE}/shops/${encodeURIComponent(shopId)}/`, {
         headers: authHeaders,
       })
-      if (!res.ok) throw new Error('상점 정보를 불러올 수 없습니다.')
+      if (!res.ok) throw new Error(t('shopDetail.errors.fetchShop'))
       const data = await res.json()
       setShop(data)
     } catch (err) {
@@ -56,11 +58,12 @@ const ShopDetail = () => {
 
   useEffect(() => {
     if (!access) {
-      setError('로그인이 필요합니다.')
+      setError(t('shopDetail.errors.loginRequired'))
       setLoading(false)
       return
     }
     fetchShopDetail(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [access, shopId])
 
   const fetchUsageHistory = async () => {
@@ -71,7 +74,7 @@ const ShopDetail = () => {
       const res = await fetch(`${API_BASE}/shops/${encodeURIComponent(shopId)}/usage/?limit=6`, {
         headers: authHeaders,
       })
-      if (!res.ok) throw new Error('사용량 기록을 불러오지 못했습니다.')
+      if (!res.ok) throw new Error(t('shopDetail.errors.loadUsage'))
       const data = await res.json()
       setUsageHistory(data)
     } catch (err) {
@@ -110,7 +113,7 @@ const ShopDetail = () => {
 
   const handleGenerate = async () => {
     if (!personImage) {
-      setGenError('전신 사진을 업로드해 주세요.')
+      setGenError(t('shopDetail.generate.errors.noPersonImage'))
       return
     }
     if (!shop) return
@@ -141,12 +144,12 @@ const ShopDetail = () => {
       })
 
       if (!res.ok) {
-        let message = '이미지 생성에 실패했습니다.'
+        let message = t('shopDetail.generate.errors.fail')
         try {
           const err = await res.json()
           message = err.error || Object.values(err)[0] || message
         } catch (parseErr) {
-          console.error(parseErr)
+          // ignore
         }
         throw new Error(message)
       }
@@ -165,13 +168,15 @@ const ShopDetail = () => {
     }
   }
 
+  const usageSummary = shop?.current_month_usage
+
   if (loading) {
     return (
       <PageLayout>
         <div className="fullscreen-state">
           <div className="state-card">
             <div className="material-spinner" />
-            <p className="state-card__message">상점 정보를 불러오는 중입니다…</p>
+            <p className="state-card__message">{t('shopDetail.loading')}</p>
           </div>
         </div>
       </PageLayout>
@@ -183,15 +188,13 @@ const ShopDetail = () => {
       <PageLayout>
         <div className="fullscreen-state">
           <div className="state-card">
-            <p className="state-card__title">요청을 완료할 수 없어요</p>
+            <p className="state-card__title">{t('shopDetail.errorView.title')}</p>
             <p className="state-card__message">{error}</p>
           </div>
         </div>
       </PageLayout>
     )
   }
-
-  const usageSummary = shop?.current_month_usage
 
   return (
     <PageLayout>
@@ -200,60 +203,59 @@ const ShopDetail = () => {
           <div className="shop-header">
             <h2>{shop?.shop_name}</h2>
             <div className="shop-header__meta">
-              <span>상점 ID · {shop?.shop_id}</span>
-              <span>업체명 · {shop?.company_name}</span>
-              <span>사업자등록번호 · {shop?.business_registration_number}</span>
-              <span>연락처 · {shop?.contact_phone}</span>
-              <span>고객 식별자 · {customerId}</span>
+              <span>{t('shopDetail.meta.shopId')} · {shop?.shop_id}</span>
+              <span>{t('shopDetail.meta.companyName')} · {shop?.company_name}</span>
+              <span>{t('shopDetail.meta.businessNumber')} · {shop?.business_registration_number}</span>
+              <span>{t('shopDetail.meta.phone')} · {shop?.contact_phone}</span>
+              <span>{t('shopDetail.meta.customerId')} · {customerId}</span>
               {typeof shop?.count === 'number' && (
-                <span>남은 크레딧 · {shop.count}</span>
+                <span>{t('shopDetail.meta.remainingCredits')} · {shop.count}</span>
               )}
               {usageSummary && (
                 <span>
-                  이번 달 사용량 {usageSummary.used_requests}/{usageSummary.quota_snapshot}
+                  {t('shopDetail.meta.monthUsage', { used: usageSummary.used_requests, quota: usageSummary.quota_snapshot })}
                 </span>
               )}
             </div>
           </div>
 
           <section>
-            <h3 className="section-heading">Generate 데모</h3>
-            <p className="auth-subtext">제품 이미지와 고객 이미지를 업로드해 AI 기반 시착 결과를 만들어 보세요.</p>
+            <h3 className="section-heading">{t('shopDetail.generate.heading')}</h3>
+            <p className="auth-subtext">{t('shopDetail.generate.subtitle')}</p>
 
             <div className="demo-grid">
               <div className="demo-panel">
-                <p className="demo-panel__title">제품 이미지</p>
-                <img src={productImageUrl} alt="제품 이미지" className="material-img" />
-                <span className="shop-meta">쇼핑몰 연동 시 이 이미지를 API 결과로 교체할 수 있습니다.</span>
+                <p className="demo-panel__title">{t('shopDetail.generate.product.title')}</p>
+                <img src={productImageUrl} alt={t('shopDetail.generate.product.alt')} className="material-img" />
+                <span className="shop-meta">{t('shopDetail.generate.product.note')}</span>
               </div>
 
-            <div className="demo-panel">
-              <p className="demo-panel__title">내 사진 업로드</p>
-              <input
-                type="file"
-                ref={fileInputRef}
+              <div className="demo-panel">
+                <p className="demo-panel__title">{t('shopDetail.generate.person.title')}</p>
+                <input
+                  type="file"
+                  ref={fileInputRef}
                   accept="image/*"
                   className="hidden-file-input"
                   onChange={handlePersonChange}
                 />
                 {!personPreview ? (
                   <button type="button" className="upload-trigger" onClick={() => fileInputRef.current?.click()}>
-                    전신 사진 선택하기
+                    {t('shopDetail.generate.person.select')}
                   </button>
                 ) : (
-                  <img src={personPreview} alt="업로드 미리보기" className="material-img" />
+                  <img src={personPreview} alt={t('shopDetail.generate.person.previewAlt')} className="material-img" />
                 )}
                 {personPreview && (
                   <button type="button" className="upload-reset" onClick={clearPersonImage}>
-                    다른 사진 선택
+                    {t('shopDetail.generate.person.reset')}
                   </button>
                 )}
               </div>
             </div>
 
             <p className="auth-subtext" style={{ marginTop: 12, textAlign: 'center' }}>
-              AI는 실수를 할 수 있습니다. 이미지가 복잡하면 시착에 실패할 수도 있습니다. <br />
-              보다 나은 결과물을 위해선 혼자만 등장하는 신체를 가리는 물건이 최대한 배제된 전신 사진을 추천합니다.
+              {t('shopDetail.generate.tips')}
             </p>
 
             <button
@@ -262,7 +264,7 @@ const ShopDetail = () => {
               onClick={handleGenerate}
               disabled={genLoading || !personImage}
             >
-              {genLoading ? '이미지를 생성하는 중… (약 10초)' : 'AI 시착 이미지 생성'}
+              {genLoading ? t('shopDetail.generate.cta.loading') : t('shopDetail.generate.cta.default')}
             </button>
 
             {genError && <div className="inline-feedback">{genError}</div>}
@@ -270,24 +272,24 @@ const ShopDetail = () => {
             {genLoading && (
               <div className="demo-status">
                 <div className="material-spinner" />
-                <span>AI가 이미지를 생성하고 있어요. 잠시만 기다려 주세요.</span>
+                <span>{t('shopDetail.generate.status')}</span>
               </div>
             )}
 
             {resultUrl && (
               <div className="demo-result">
-                <p className="demo-panel__title">생성된 시착 이미지</p>
-                <img src={resultUrl} alt="생성된 시착 결과" />
+                <p className="demo-panel__title">{t('shopDetail.generate.result.title')}</p>
+                <img src={resultUrl} alt={t('shopDetail.generate.result.alt')} />
               </div>
             )}
           </section>
 
           <section className="usage-history">
-            <h3 className="section-heading">최근 사용량</h3>
+            <h3 className="section-heading">{t('shopDetail.usage.heading')}</h3>
             {usageLoading && (
               <div className="demo-status">
                 <div className="material-spinner" />
-                <span>사용량을 불러오는 중입니다…</span>
+                <span>{t('shopDetail.usage.loading')}</span>
               </div>
             )}
             {usageError && <div className="material-error">{usageError}</div>}
@@ -302,7 +304,7 @@ const ShopDetail = () => {
               </ul>
             )}
             {!usageLoading && !usageError && usageHistory.length === 0 && (
-              <p className="auth-subtext">아직 집계된 사용량이 없습니다.</p>
+              <p className="auth-subtext">{t('shopDetail.usage.empty')}</p>
             )}
           </section>
         </div>
