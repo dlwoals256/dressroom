@@ -1,10 +1,12 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 const PageLayout = ({ children }) => {
+  const [isMenuOpen, setMenuOpen] = useState(false)
   const isAuthed = typeof window !== 'undefined' && !!localStorage.getItem('access')
   const { t, i18n } = useTranslation()
+  const location = useLocation()
 
   // 지원 언어를 i18n 리소스에서 자동으로 가져옴 (ko/en + jp 또는 ja)
   const supported = Object.keys(i18n.options?.resources || {})
@@ -30,24 +32,60 @@ const PageLayout = ({ children }) => {
     try { localStorage.setItem('i18nextLng', next) } catch (_) {}
   }
 
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
+  const toggleMenu = () => setMenuOpen((prev) => !prev)
+
   return (
     <div className="app-root">
       <header className="global-header">
-        <Link to="/" className="global-header__brand-link" aria-label={t('layout.brand.aria', '홈으로')}>
-          <img
-            src="/assets/icon.png"
-            alt={t('layout.brand.logoAlt', 'Dressroom 로고')}
-            className="global-header__logo"
-          />
-          <div className="global-header__brand-text">
-            <p className="global-header__title">Dressroom</p>
-            <p className="global-header__tagline">
-              {t('layout.brand.tagline', 'AI Virtual Fitting for Modern Commerce')}
-            </p>
-          </div>
-        </Link>
+        <div className="global-header__lead">
+          <Link to="/" className="global-header__brand-link" aria-label={t('layout.brand.aria', '홈으로')}>
+            <img
+              src="/assets/icon.png"
+              alt={t('layout.brand.logoAlt', 'Dressroom 로고')}
+              className="global-header__logo"
+            />
+            <div className="global-header__brand-text">
+              <p className="global-header__title">Dressroom</p>
+              <p className="global-header__tagline">
+                {t('layout.brand.tagline', 'AI Virtual Fitting for Modern Commerce')}
+              </p>
+            </div>
+          </Link>
+          <button
+            type="button"
+            className="mobile-menu-toggle"
+            aria-expanded={isMenuOpen}
+            aria-controls="global-nav"
+            aria-label={
+              isMenuOpen
+                ? t('layout.nav.closeMenu', '메뉴 닫기')
+                : t('layout.nav.openMenu', '메뉴 열기')
+            }
+            onClick={toggleMenu}
+          >
+            <span className="sr-only">
+              {isMenuOpen
+                ? t('layout.nav.closeMenu', '메뉴 닫기')
+                : t('layout.nav.openMenu', '메뉴 열기')}
+            </span>
+            <img
+              src="/assets/hamburger.svg"
+              alt=""
+              aria-hidden="true"
+              className="mobile-menu-toggle__icon"
+            />
+          </button>
+        </div>
 
-        <nav className="global-nav" aria-label={t('layout.nav.aria', '주요 메뉴')}>
+        <nav
+          id="global-nav"
+          className={`global-nav${isMenuOpen ? ' global-nav--open' : ''}`}
+          aria-label={t('layout.nav.aria', '주요 메뉴')}
+        >
           <Link to="/" className="nav-link">{t('layout.nav.about', '서비스 소개')}</Link>
           <Link to="/dashboard" className="nav-link">{t('layout.nav.dashboard', '대시보드')}</Link>
           {isAuthed ? (
