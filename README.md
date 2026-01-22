@@ -2,6 +2,13 @@
 
 Virtual dressroom service on Google Gemini API.
 
+## Overview
+
+Online fashion E-commerce could not have tried-on their products. Customer wants to know this cloth fits to them.
+Here, the Dressroom, virtual try-on solution for online fashion E-commerce.
+
+With this, E-commerce can offer their customers of trying-on their product by uploading customer's photo!
+
 ## Structure
 
 ```
